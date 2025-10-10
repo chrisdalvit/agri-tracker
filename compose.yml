@@ -1,0 +1,25 @@
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80"
+  backend:
+    build: ./backend
+    ports: 
+      - "5000:5000"
+  elso-db:
+    image: postgres:17
+    container_name: db
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: admin
+    volumes:
+      - ./db/initdb.d:/docker-entrypoint-initdb.d:ro
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    expose:
+      - 5432
+
+volumes:
+  pgdata:
