@@ -5,21 +5,23 @@ services:
       - "80:80"
   backend:
     build: ./backend
+    environment:
+      - DATABASE_URL=postgresql://admin:admin@db:5432/agritracker
     ports: 
       - "5000:5000"
-  elso-db:
+  db:
     image: postgres:17
     container_name: db
     restart: always
     environment:
+      POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
+      POSTGRES_DB: agritracker
     volumes:
       - ./db/initdb.d:/docker-entrypoint-initdb.d:ro
-      - pgdata:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data/
     ports:
       - "5432:5432"
-    expose:
-      - 5432
 
 volumes:
-  pgdata:
+  postgres_data:
