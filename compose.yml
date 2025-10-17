@@ -8,7 +8,7 @@ services:
     environment:
       - DATABASE_URL=postgresql://admin:admin@db:5432/agritracker
     ports: 
-      - "5000:5000"
+      - "5001:5000"
   db:
     image: postgres:17
     container_name: db
