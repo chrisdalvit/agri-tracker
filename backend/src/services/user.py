@@ -11,6 +11,7 @@ class UserService:
         self.session_chars = string.ascii_letters + string.digits + '-_'
 
     def login(self, email: str, password: str) -> User | None:
+        self.session_repository.delete_old_sessions()
         user = self.user_repository.get_user_by_email(email)
         if user and user.password == password:
             token = ''.join(random.choices(self.session_chars, k=128))
