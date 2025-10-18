@@ -1,14 +1,44 @@
-import { Box, AppBar, Toolbar, Button, IconButton } from "@mui/material"
+import { Box, AppBar, Toolbar, Button, IconButton, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Divider } from "@mui/material"
 import MenuIcon from '@mui/icons-material/Menu';
-import { ReactNode, useState } from "react"
-import { Outlet } from "react-router";
+import { useState } from "react"
+import { Outlet, useNavigate } from "react-router";
 import { useAuth } from "../hooks/useAuth";
+import LogoutIcon from '@mui/icons-material/Logout';
+import HomeWorkIcon from '@mui/icons-material/HomeWork';
 
 
 export function GlobalMenu () {
     const { handleLogout } = useAuth()
+    const navigate = useNavigate()
     const [drawer, setDrawer] = useState({open: false})
     const toggleDrawer = () => setDrawer(old => ({open: !old.open}))
+
+    const DrawerList = (
+        <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer}>
+        <List>
+            <ListItem key="Farms" disablePadding>
+                <ListItemButton onClick={() => navigate("/farms")}>
+                    <ListItemIcon>
+                        <HomeWorkIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Farms" />
+                </ListItemButton>
+            </ListItem>
+        </List>
+        <Divider />
+        <List>
+            <ListItem key="Logout" disablePadding>
+                <ListItemButton onClick={handleLogout}>
+                    <ListItemIcon>
+                        <LogoutIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Logout" />
+                </ListItemButton>
+            </ListItem>
+        </List>
+        </Box>
+    );
+
     return (
         <div>
             <Box sx={{ flexGrow: 1 }}>
@@ -26,12 +56,14 @@ export function GlobalMenu () {
                     </IconButton>
                     <Button color="inherit">Agritracker</Button>
                 </Toolbar>
-                <Button color="inherit" onClick={handleLogout}>Logout</Button>
             </AppBar>
             </Box>
             <div style={{margin: '8px'}}>
                 <Outlet />
             </div>
+            <Drawer open={drawer.open} onClose={toggleDrawer}>
+                {DrawerList}
+            </Drawer>
         </div>
     )
 }

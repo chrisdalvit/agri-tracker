@@ -1,7 +1,7 @@
 import sqlalchemy as sa
 from . import Base
 
-class Session(Base):
+class UserSession(Base):
     __tablename__ = 'session'
 
     token = sa.Column(sa.String(128), primary_key=True)

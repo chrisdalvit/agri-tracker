@@ -1,10 +1,12 @@
 from pydantic import BaseModel
 from fastapi import FastAPI, Response, status, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from .models import SessionLocal, Base, engine
+
+from .models import Base, engine
 from .models.user import User
 from .services.user import UserService
 from .services.access_controller import AccessController
+from .services.farm import FarmService
 app = FastAPI()
 
 class LoginRequest(BaseModel):
@@ -15,13 +17,6 @@ class LogoutRequest(BaseModel):
     token: str
 
 Base.metadata.create_all(bind=engine)
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
         
 origins = [
     "http://localhost",
@@ -37,8 +32,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-db = SessionLocal()
-user_service = UserService(db)
+user_service = UserService(engine)
+farm_service = FarmService(engine)
 access_controller = AccessController(user_service)
 
 @app.post("/login")
@@ -53,4 +48,9 @@ def login(login_request: LoginRequest, response: Response):
 @app.post("/logout")
 def logout(user: User = Depends(access_controller.is_logged_in)):
     user_service.logout(user)
+    
+@app.get("/farms")
+def farms(user: User = Depends(access_controller.is_logged_in)):
+    farms = farm_service.get_farms_by_user(user)
+    return farms
 

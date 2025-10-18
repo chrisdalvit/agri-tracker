@@ -1,13 +1,15 @@
 import random
 import string
+
+from sqlalchemy import Engine
 from ..models.user import User
 from ..repositories.user import UserRepository
-from ..repositories.session import SessionRepository
+from ..repositories.session import UserSessionRepository
 
 class UserService:
-    def __init__(self, db_session):
-        self.user_repository = UserRepository(db_session)
-        self.session_repository = SessionRepository(db_session)
+    def __init__(self, engine: Engine):
+        self.user_repository = UserRepository(engine)
+        self.session_repository = UserSessionRepository(engine)
         self.session_chars = string.ascii_letters + string.digits + '-_'
 
     def login(self, email: str, password: str) -> User | None:
