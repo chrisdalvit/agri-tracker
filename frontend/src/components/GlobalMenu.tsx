@@ -17,11 +17,11 @@ export function GlobalMenu () {
         <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer}>
         <List>
             <ListItem key="Farms" disablePadding>
-                <ListItemButton onClick={() => navigate("/farms")}>
+                <ListItemButton onClick={() => navigate("/orchards")}>
                     <ListItemIcon>
                         <HomeWorkIcon />
                     </ListItemIcon>
-                    <ListItemText primary="Farms" />
+                    <ListItemText primary="Orchards" />
                 </ListItemButton>
             </ListItem>
         </List>

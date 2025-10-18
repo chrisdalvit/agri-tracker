@@ -1,5 +1,5 @@
-CREATE TABLE "user_farm_access" (
+CREATE TABLE "user_orchard_access" (
     user_id INT REFERENCES "user" (id),
-    farm_id INT REFERENCES farm (id),
-    PRIMARY KEY (user_id, farm_id)
+    orchard_id INT REFERENCES orchard (id),
+    PRIMARY KEY (user_id, orchard_id)
 );

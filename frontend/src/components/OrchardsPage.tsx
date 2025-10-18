@@ -1,14 +1,14 @@
 import { Grid, Skeleton, Stack, Typography } from "@mui/material";
-import { OrchardGrid } from "./OrchardGrid";
+import { OrchardCard } from "./OrchardCard";
 import { useQuery } from "@tanstack/react-query";
 import { useAPI } from "../hooks/useAPI";
 
-export function FarmsPage() {
+export function OrchardsPage() {
 
-    const { queryUserFarms } = useAPI()
-    const userFarmsQuery = useQuery(queryUserFarms)
+    const { queryUserOrchards } = useAPI()
+    const userOrchardsQuery = useQuery(queryUserOrchards())
 
-    if (userFarmsQuery.isLoading) {
+    if (userOrchardsQuery.isLoading) {
         return <Grid container rowSpacing={3}>
              <Stack spacing={1}>
                 <Typography variant="h5"><Skeleton/></Typography>
@@ -20,12 +20,7 @@ export function FarmsPage() {
     return (
         <Grid container rowSpacing={3}>
             {
-                userFarmsQuery.data.map((farm: any) => {
-                    return <Grid size={12}> 
-                        <Typography variant="h5">{farm.name}</Typography>
-                        <OrchardGrid orchards={farm.orchards}/>
-                    </Grid>
-                })
+                userOrchardsQuery.data.map((orchard: any) => <OrchardCard id={orchard.id} name={orchard.name} />)
             }
         </Grid>
     )

@@ -1,12 +1,12 @@
 from pydantic import BaseModel
-from fastapi import FastAPI, Response, status, Depends
+from fastapi import FastAPI, HTTPException, status, Depends
 from fastapi.middleware.cors import CORSMiddleware
 
 from .models import Base, engine
 from .models.user import User
 from .services.user import UserService
 from .services.access_controller import AccessController
-from .services.farm import FarmService
+from .services.orchard import OrchardService
 app = FastAPI()
 
 class LoginRequest(BaseModel):
@@ -33,24 +33,21 @@ app.add_middleware(
 )
 
 user_service = UserService(engine)
-farm_service = FarmService(engine)
+orchard_service = OrchardService(engine)
 access_controller = AccessController(user_service)
 
 @app.post("/login")
-def login(login_request: LoginRequest, response: Response):
+def login(login_request: LoginRequest):
     token = user_service.login(login_request.email, login_request.password)
-    if token:
-        return {"redirect": "/", "session": token}
-    else:
-        response.status_code = status.HTTP_401_UNAUTHORIZED
-        return response
+    if not token:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+    return {"redirect": "/", "session": token}
     
 @app.post("/logout")
 def logout(user: User = Depends(access_controller.is_logged_in)):
     user_service.logout(user)
     
-@app.get("/farms")
+@app.get("/orchards")
 def farms(user: User = Depends(access_controller.is_logged_in)):
-    farms = farm_service.get_farms_by_user(user)
-    return farms
+    return orchard_service.get_user_orchards(user)
 

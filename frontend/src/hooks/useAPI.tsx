@@ -6,8 +6,8 @@ export function useAPI() {
 
     const [cookies, setCookie, removeCookie] = useCookies([SESSION_COOKIE_KEY]);
 
-    async function fetchUserFarms() {
-        const response = await fetch(API_HOST + "/farms", {
+    async function fetchUserOrchards() {
+        const response = await fetch(API_HOST + "/orchards", {
             method: "GET",
             headers: {
                 "X-Session-Token": cookies.agritracker_session
@@ -17,6 +17,6 @@ export function useAPI() {
     }
 
     return {
-        queryUserFarms: { queryKey: ['farms'], queryFn: fetchUserFarms }
+        queryUserOrchards: () => ({ queryKey: ['farms'], queryFn: fetchUserOrchards }),
     }
 }

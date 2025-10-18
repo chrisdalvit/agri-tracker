@@ -3,7 +3,7 @@ import './index.css';
 import { createBrowserRouter, RouterProvider } from "react-router";
 
 import { GlobalMenu } from "./components/GlobalMenu"
-import { FarmsPage } from './components/FarmsPage';
+import { OrchardsPage } from './components/OrchardsPage';
 import { LoginPage } from './components/LoginPage';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Autheticated } from './components/Autheticated';
@@ -20,8 +20,8 @@ let router = createBrowserRouter([
     element: <Autheticated><GlobalMenu /></Autheticated>,
     children: [
       {
-        path: "/farms",
-        element: <FarmsPage />
+        path: "/orchards",
+        element: <OrchardsPage />
       }
     ]
   },
