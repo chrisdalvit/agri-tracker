@@ -10,12 +10,12 @@ class UserRepository:
         with Session(self.engine) as session:
             with session.begin():
                 user = session.query(User).filter(User.email == email).first()
-                session.expunge(user)
+                session.expunge_all()
                 return user if user else None
     
     def get_user_by_id(self, id: int):
         with Session(self.engine) as session:
             with session.begin():
                 user = session.query(User).filter(User.id == id).first()
-                session.expunge(user)
+                session.expunge_all()
                 return user if user else None

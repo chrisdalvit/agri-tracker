@@ -1,5 +1,4 @@
 import sqlalchemy as sa
-from sqlalchemy.orm import relationship
 from . import Base
 
 class User(Base):

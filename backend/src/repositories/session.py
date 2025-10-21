@@ -28,12 +28,12 @@ class UserSessionRepository:
         with Session(self.engine) as session:
             with session.begin():
                 user_session = session.query(UserSession).filter(UserSession.expiration > dt.datetime.now(dt.timezone.utc), UserSession.user_id == user_id).first() 
-                session.expunge(user_session)
+                session.expunge_all()
                 return user_session
     
     def get_session_by_token(self, token: str) -> UserSession | None:
         with Session(self.engine) as session:
             with session.begin():
                 user_session = session.query(UserSession).filter(UserSession.expiration > dt.datetime.now(dt.timezone.utc), UserSession.token == token).first() 
-                session.expunge(user_session)
+                session.expunge_all()
                 return user_session
