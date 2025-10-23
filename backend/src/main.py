@@ -7,6 +7,7 @@ from .models.user import User
 from .services.user import UserService
 from .services.access_controller import AccessController
 from .services.orchard import OrchardService
+from .services.worker import WorkerService
 app = FastAPI()
 
 class LoginRequest(BaseModel):
@@ -15,6 +16,10 @@ class LoginRequest(BaseModel):
     
 class LogoutRequest(BaseModel):
     token: str
+    
+class NewWorkerRequest(BaseModel):
+    firstname: str
+    lastname: str
 
 Base.metadata.create_all(bind=engine)
         
@@ -35,6 +40,7 @@ app.add_middleware(
 user_service = UserService(engine)
 orchard_service = OrchardService(engine)
 access_controller = AccessController(user_service)
+worker_service = WorkerService(engine)
 
 @app.post("/login")
 def login(login_request: LoginRequest):
@@ -47,7 +53,22 @@ def login(login_request: LoginRequest):
 def logout(user: User = Depends(access_controller.is_logged_in)):
     user_service.logout(user)
     
+@app.get("/workers")
+def workers(user: User = Depends(access_controller.is_logged_in)):
+    return worker_service.get_all_workers()
+
+@app.post("/workers")
+def add_worker(new_worker: NewWorkerRequest, user: User = Depends(access_controller.is_logged_in)):
+    return worker_service.add_worker(new_worker.firstname, new_worker.lastname)
+
+@app.delete("/workers/{id}")
+def delete_worker(id: int, user: User = Depends(access_controller.is_logged_in)):
+    worker_service.delete_worker(id)
+
 @app.get("/orchards")
-def farms(user: User = Depends(access_controller.is_logged_in)):
+def orchards(user: User = Depends(access_controller.is_logged_in)):
     return orchard_service.get_user_orchards(user)
 
+@app.get("/orchards/{id}")
+def orchard(id: int, user: User = Depends(access_controller.is_logged_in)):
+    return orchard_service.get_user_orchard(user, id)

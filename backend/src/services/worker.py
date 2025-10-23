@@ -8,3 +8,9 @@ class WorkerService:
         
     def get_all_workers(self):
         return self.worker_repository.get_all_workers()
+    
+    def add_worker(self, firstname: str, lastname: str):
+        return self.worker_repository.add_worker(firstname, lastname, deleted=False)
+
+    def delete_worker(self, worker_id: int):
+        self.worker_repository.delete_worker(worker_id)

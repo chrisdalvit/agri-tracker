@@ -16,12 +16,20 @@ export function GlobalMenu () {
     const DrawerList = (
         <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer}>
         <List>
-            <ListItem key="Farms" disablePadding>
+            <ListItem key="orchards" disablePadding>
                 <ListItemButton onClick={() => navigate("/orchards")}>
                     <ListItemIcon>
                         <HomeWorkIcon />
                     </ListItemIcon>
                     <ListItemText primary="Orchards" />
+                </ListItemButton>
+            </ListItem>
+            <ListItem key="workers" disablePadding>
+                <ListItemButton onClick={() => navigate("/workers")}>
+                    <ListItemIcon>
+                        <HomeWorkIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Workers" />
                 </ListItemButton>
             </ListItem>
         </List>
