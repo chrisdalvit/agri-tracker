@@ -14,3 +14,6 @@ class WorkerService:
 
     def delete_worker(self, worker_id: int):
         self.worker_repository.delete_worker(worker_id)
+        
+    def edit_worker(self, worker_id: int, firstname: str, lastname: str):
+        return self.worker_repository.edit_worker(worker_id, firstname, lastname)

@@ -6,13 +6,13 @@ import { useAPI } from "../hooks/useAPI";
 import { NewFarmWorker } from "../utils/types";
 
 
-type WorkerDialogProps = {
+type AddWorkerDialogProps = {
     open: boolean
     onClose: () => void
 }
 
 
-export function WorkerDialog ({ open, onClose }: WorkerDialogProps) {
+export function AddWorkerDialog ({ open, onClose }: AddWorkerDialogProps) {
     const { addWorkerMutation } = useAPI()
     const [worker, setWorker] = useState({ firstname: '', lastname: '' })
 

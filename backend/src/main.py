@@ -20,6 +20,12 @@ class LogoutRequest(BaseModel):
 class NewWorkerRequest(BaseModel):
     firstname: str
     lastname: str
+    
+class UpdateWorkerRequest(BaseModel):
+    id: int
+    firstname: str
+    lastname: str
+    deleted: bool
 
 Base.metadata.create_all(bind=engine)
         
@@ -64,6 +70,10 @@ def add_worker(new_worker: NewWorkerRequest, user: User = Depends(access_control
 @app.delete("/workers/{id}")
 def delete_worker(id: int, user: User = Depends(access_controller.is_logged_in)):
     worker_service.delete_worker(id)
+    
+@app.put("/workers/{id}")
+def edit_worker(id: int, updated_worker: UpdateWorkerRequest, user: User = Depends(access_controller.is_logged_in)):
+    return worker_service.edit_worker(id, updated_worker.firstname, updated_worker.lastname)
 
 @app.get("/orchards")
 def orchards(user: User = Depends(access_controller.is_logged_in)):

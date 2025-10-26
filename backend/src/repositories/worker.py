@@ -10,7 +10,7 @@ class WorkerRepository:
     def get_all_workers(self):
         with Session(self.engine) as session:
             with session.begin():
-                workers = session.query(Worker).filter(Worker.deleted == False).all()
+                workers = session.query(Worker).filter(Worker.deleted == False).order_by(Worker.id).all()
                 session.expunge_all()
                 return workers
             
@@ -31,3 +31,15 @@ class WorkerRepository:
                 if worker:
                     worker.deleted = True
                     session.flush()
+                    
+    def edit_worker(self, worker_id: int, firstname: str, lastname: str):
+        with Session(self.engine) as session:
+            with session.begin():
+                worker = session.get(Worker, worker_id)
+                if worker:
+                    worker.firstname = firstname
+                    worker.lastname = lastname
+                    session.flush()
+                    session.refresh(worker)
+                    session.expunge_all()
+                    return worker

@@ -4,18 +4,25 @@ import { Avatar, Fab, IconButton, List, ListItem, ListItemAvatar, ListItemText, 
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import AddIcon from '@mui/icons-material/Add';
 import { useState } from "react";
-import { WorkerDialog } from "./WorkerDialog";
+import { AddWorkerDialog } from "./AddWorkerDialog";
 import { FarmWorker } from "../utils/types";
+import { EditWorkerDialog } from "./EditWorkerDialog";
 
 export function WorkerPage() {
     const { queryWorkers, deleteWorkerMutation } = useAPI()
     const workersQuery = useQuery(queryWorkers())
-    const [dialog, setDialog] = useState({open: false})
-    const [moreVertMenu, setMoreVertMenu] = useState<{anchor: null | HTMLElement}>({anchor: null})
+    const [addDialog, setAddDialog] = useState({open: false})
+    const [editDialog, setEditDialog] = useState<{open: boolean, worker: FarmWorker | null}>({open: false, worker: null})
+    const [moreVertMenu, setMoreVertMenu] = useState<{anchor: null | HTMLElement, workerId: number | null}>({anchor: null, workerId: null})
     const deleteMutation = useMutation(deleteWorkerMutation())
 
     function handleDeleteWorker (worker: FarmWorker) {
         deleteMutation.mutate(worker)
+        setMoreVertMenu({...moreVertMenu, anchor: null})
+    }
+
+    function handleEditWorker (worker: FarmWorker) {
+        setEditDialog({ open: true, worker: worker })
         setMoreVertMenu({...moreVertMenu, anchor: null})
     }
 
@@ -31,30 +38,30 @@ export function WorkerPage() {
                     workersQuery.data.map(w =>
                     <>
                         <ListItem key={w.id}
-                            secondaryAction={<>
-                                    <IconButton onClick={(event) => setMoreVertMenu({...moreVertMenu, anchor: event.currentTarget})}>
-                                        <MoreVertIcon />
-                                    </IconButton>
-                                </>
+                            secondaryAction={
+                                <IconButton onClick={(event) => setMoreVertMenu({anchor: event.currentTarget, workerId: w.id})}>
+                                    <MoreVertIcon />
+                                </IconButton>
                             }
                         >
                             <ListItemAvatar>
                                 <Avatar>{w.firstname[0]}</Avatar>
                             </ListItemAvatar>
                             <ListItemText primary={w.firstname + " " + w.lastname} />
+                            <Menu id={`moreVertMenu-${w.id}`} anchorEl={moreVertMenu.workerId === w.id ? moreVertMenu.anchor : null} open={Boolean(moreVertMenu.anchor) && moreVertMenu.workerId === w.id} onClose={() => setMoreVertMenu({anchor: null, workerId: null})}>
+                                <MenuItem onClick={() => handleEditWorker(w)}>Edit</MenuItem>
+                                <MenuItem onClick={() => handleDeleteWorker(w)}>Delete</MenuItem>
+                            </Menu>
                         </ListItem>
-                        <Menu id="moreVertMenu" anchorEl={moreVertMenu.anchor} open={Boolean(moreVertMenu.anchor)} onClose={() => setMoreVertMenu({...moreVertMenu, anchor: null})}>
-                            <MenuItem>Edit</MenuItem>
-                            <MenuItem onClick={() => handleDeleteWorker(w)}>Delete</MenuItem>
-                        </Menu>
                     </>
                     )
                 }
             </List>
-            <Fab color="primary" sx={{ position: 'fixed', bottom: 16, right: 16 }} onClick={() => setDialog({...dialog, open: true})}>
+            <Fab color="primary" sx={{ position: 'fixed', bottom: 16, right: 16 }} onClick={() => setAddDialog({...addDialog, open: true})}>
                 <AddIcon />
             </Fab>
-            <WorkerDialog open={dialog.open} onClose={() => setDialog({...dialog, open: false})}/>
+            <AddWorkerDialog open={addDialog.open} onClose={() => setAddDialog({...addDialog, open: false})}/>
+            <EditWorkerDialog open={editDialog.open} onClose={() => setEditDialog({ ...editDialog, open: false, worker: null })} worker={editDialog.worker}/>
         </>
     )
 }

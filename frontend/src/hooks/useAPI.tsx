@@ -55,6 +55,22 @@ export function useAPI() {
         return response
     }
 
+    async function genericPutRequest(url: string, data: object) {
+        const response = await fetch(url, {
+            method: "PUT",
+            headers: {
+                "X-Session-Token": cookies.agritracker_session,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+        if (response.status === 401){ // UNAUTHORIZED --> logout
+            removeCookie(SESSION_COOKIE_KEY)
+            navigate("/login")
+        }
+        return response
+    }
+
     async function fetchUserOrchards() {
         const response = await genericGetRequest(API_HOST + "/orchards")
         return response.json()
@@ -78,11 +94,16 @@ export function useAPI() {
         await genericDeleteRequest(API_HOST + "/workers/" + worker.id.toString())
     }
 
+    async function editWorker(worker: FarmWorker) {
+        await genericPutRequest(API_HOST + "/workers/" + worker.id.toString(), worker)
+    }
+
     return {
         queryUserOrchards: () => ({ queryKey: ['userOrchards'], queryFn: fetchUserOrchards }),
         queryUserOrchard: (id: string) => ({ queryKey: ['userOrchard', id], queryFn: () => fetchUserOrchard(id) }),
         queryWorkers: () => ({ queryKey: ['workers'], queryFn: fetchWorkers }),
         addWorkerMutation: () => ({ mutationFn: (worker: NewFarmWorker) => addWorker(worker), onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['workers'] }) } }),
-        deleteWorkerMutation: () => ({ mutationFn: (worker: FarmWorker) => deleteWorker(worker), onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['workers'] }) } })
+        deleteWorkerMutation: () => ({ mutationFn: (worker: FarmWorker) => deleteWorker(worker), onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['workers'] }) } }),
+        editWorkerMutation: () => ({ mutationFn: (worker: FarmWorker) => editWorker(worker), onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['workers'] }) } })
     }
 }
